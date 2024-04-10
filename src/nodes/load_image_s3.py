@@ -11,13 +11,10 @@ class LoadImageS3:
     @classmethod
     def INPUT_TYPES(s):
         input_dir = os.getenv("S3_INPUT_DIR")
-        try:
-            files = S3_INSTANCE.get_files(prefix=input_dir)
-        except Exception as e:
-            files = []
-        return {"required":
-                    {"image": (sorted(files), {"image_upload": False})},
-                }
+        return {"required": {
+            "image": ("STRING", {"default": "SomeImage"}),
+            }
+        }
     
     CATEGORY = "ComfyS3"
     RETURN_TYPES = ("IMAGE", "MASK")
