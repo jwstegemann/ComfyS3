@@ -15,15 +15,17 @@ class LoadImageS3:
             "image": ("STRING", {"default": "SomeImage"}),
             }
         }
-    
+
     CATEGORY = "ComfyS3"
     RETURN_TYPES = ("IMAGE", "MASK")
     FUNCTION = "load_image"
-    
+
     def load_image(self, image):
         s3_path = os.path.join(os.getenv("S3_INPUT_DIR"), image)
         image_path = S3_INSTANCE.download_file(s3_path=s3_path, local_path=f"input/{image}")
-        
+
+        print("IN LOAD IMAGE: %s", image_path)
+
         img = Image.open(image_path)
         output_images = []
         output_masks = []

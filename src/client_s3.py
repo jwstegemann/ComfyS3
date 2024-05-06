@@ -25,7 +25,7 @@ class S3:
         if not all([self.region, self.access_key, self.secret_key, self.bucket_name]):
             err = "Missing required S3 environment variables."
             logger.error(err)
-    
+
         try:
             s3 = boto3.resource(
                 service_name='s3',
@@ -50,7 +50,7 @@ class S3:
                 logger.error(err)
         else:
             return []
-    
+
     def does_folder_exist(self, folder_name):
         try:
             bucket = self.s3_client.Bucket(self.bucket_name)
@@ -59,7 +59,7 @@ class S3:
         except Exception as e:
             err = f"Failed to check if folder exists in S3: {e}"
             logger.error(err)
-    
+
     def create_folder(self, folder_name):
         try:
             bucket = self.s3_client.Bucket(self.bucket_name)
@@ -67,8 +67,10 @@ class S3:
         except Exception as e:
             err = f"Failed to create folder in S3: {e}"
             logger.error(err)
-    
+
     def download_file(self, s3_path, local_path):
+        print("IN DOWNLOAD FILE: %s", local_path)
+
         local_dir = os.path.dirname(local_path)
         if not os.path.exists(local_dir):
             os.makedirs(local_dir)
@@ -82,6 +84,7 @@ class S3:
         except Exception as e:
             err = f"Failed to download file from S3: {e}"
             logger.error(err)
+            logger.error(s3_path)
 
     def upload_file(self, local_path, s3_path):
         try:
@@ -94,7 +97,7 @@ class S3:
         except Exception as e:
             err = f"Failed to upload file to S3: {e}"
             logger.error(err)
-    
+
     def get_save_path(self, filename_prefix, image_width=0, image_height=0):
         def map_filename(filename):
             prefix_len = len(os.path.basename(filename_prefix))
@@ -113,9 +116,9 @@ class S3:
         filename_prefix = compute_vars(filename_prefix, image_width, image_height)
         subfolder = os.path.dirname(os.path.normpath(filename_prefix))
         filename = os.path.basename(os.path.normpath(filename_prefix))
-        
+
         full_output_folder_s3 = os.path.join(self.output_dir, subfolder)
-        
+
         # Check if the output folder exists, create it if it doesn't
         if not self.does_folder_exist(full_output_folder_s3):
             self.create_folder(full_output_folder_s3)
@@ -131,7 +134,7 @@ class S3:
             )[0] + 1
         except (ValueError, KeyError):
             counter = 1
-        
+
         return full_output_folder_s3, filename, counter, subfolder, filename_prefix
 
 
