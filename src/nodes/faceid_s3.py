@@ -1,6 +1,7 @@
 import torch
 import os
 import folder_paths
+import tempfile
 
 from ..client_s3 import get_s3_instance
 S3_INSTANCE = get_s3_instance()
@@ -23,10 +24,23 @@ class IPAdapterSaveFaceIdS3:
     CATEGORY = "ipadapter/faceid"
 
     def save(self, faceid, filename):
-        local_path = file = os.path.join(folder_paths.get_output_directory(), filename)
-        torch.save(faceid, local_path)
-        s3_path = os.path.join(os.getenv("S3_OUTPUT_DIR"), filename)
-        S3_INSTANCE.upload_file(local_path=local_path, s3_path=s3_path)
+        try:
+            # Create a temporary file
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".faceid") as temp_file:
+                temp_file_path = temp_file.name
+
+                # Save faceid to temp file
+                torch.save(faceid, temp_file_path)
+
+                # Upload the temporary file to S3
+                s3_path = os.path.join(os.getenv("S3_OUTPUT_DIR"), filename)
+                S3_INSTANCE.upload_file(temp_file_path, s3_path)
+
+        finally:
+            # Delete the temporary file
+            if temp_file_path and os.path.exists(temp_file_path):
+                os.remove(temp_file_path)
+
         return (None, )
 
 

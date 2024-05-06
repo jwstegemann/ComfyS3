@@ -17,7 +17,7 @@ class SaveImageS3:
         self.s3_output_dir = os.getenv("S3_OUTPUT_DIR")
         self.type = "output"
         self.prefix_append = ""
-        self.compress_level = 4
+        self.compress_level = 7
 
     @classmethod
     def INPUT_TYPES(s):
@@ -37,7 +37,7 @@ class SaveImageS3:
         filename_prefix += self.prefix_append
         full_output_folder, filename, counter, subfolder, filename_prefix = S3_INSTANCE.get_save_path(filename_prefix, images[0].shape[1], images[0].shape[0])
         results = list()
-        
+
         for image in images:
             i = 255. * image.cpu().numpy()
             img = Image.fromarray(np.clip(i, 0, 255).astype(np.uint8))
@@ -49,14 +49,14 @@ class SaveImageS3:
                 if extra_pnginfo is not None:
                     for x in extra_pnginfo:
                         metadata.add_text(x, json.dumps(extra_pnginfo[x]))
-            
+
             file = f"{filename}_{counter:05}_.png"
             temp_file = None
             try:
                 # Create a temporary file
                 with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as temp_file:
                     temp_file_path = temp_file.name
-                    
+
                     # Save the image to the temporary file
                     img.save(temp_file_path, pnginfo=metadata, compress_level=self.compress_level)
 
