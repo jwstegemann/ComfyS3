@@ -69,8 +69,6 @@ class S3:
             logger.error(err)
 
     def download_file(self, s3_path, local_path):
-        print("IN DOWNLOAD FILE: %s", local_path)
-
         local_dir = os.path.dirname(local_path)
         if not os.path.exists(local_dir):
             os.makedirs(local_dir)

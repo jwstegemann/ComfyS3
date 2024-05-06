@@ -21,10 +21,11 @@ class LoadImageS3:
     FUNCTION = "load_image"
 
     def load_image(self, image):
-        s3_path = os.path.join(os.getenv("S3_INPUT_DIR"), image)
-        image_path = S3_INSTANCE.download_file(s3_path=s3_path, local_path=f"input/{image}")
+        input_dir = folder_paths.get_input_directory()
+        local_path = os.path.join(input_dir, image)
 
-        print("IN LOAD IMAGE: %s", image_path)
+        s3_path = os.path.join(os.getenv("S3_INPUT_DIR"), image)
+        image_path = S3_INSTANCE.download_file(s3_path=s3_path, local_path=local_path)
 
         img = Image.open(image_path)
         output_images = []
