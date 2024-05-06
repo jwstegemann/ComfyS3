@@ -1,6 +1,7 @@
 import os
 import torch
 import numpy as np
+import folder_paths
 from PIL import Image, ImageOps, ImageSequence
 
 from ..client_s3 import get_s3_instance
