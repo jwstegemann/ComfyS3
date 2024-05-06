@@ -44,5 +44,5 @@ class IPAdapterLoadFaceIdS3:
         local_path = os.path.join(input_dir, faceid)
         s3_path = os.path.join(os.getenv("S3_INPUT_DIR"), faceid)
         downloaded_path = S3_INSTANCE.download_file(s3_path=s3_path, local_path=local_path)
-        faceid = torch.load(downloaded)
+        faceid = torch.load(downloaded_path)
         return ({ "cond": faceid["cond"] , "uncond": faceid["uncond"], "cond_alt" : faceid["cond_alt"], "img_cond_embeds": faceid["img_cond_embeds"]}, )
