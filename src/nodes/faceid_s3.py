@@ -2,6 +2,7 @@ import torch
 import os
 import folder_paths
 import tempfile
+import time
 
 from ..client_s3 import get_s3_instance
 S3_INSTANCE = get_s3_instance()
@@ -24,6 +25,8 @@ class IPAdapterSaveFaceIdS3:
     CATEGORY = "ipadapter/faceid"
 
     def save(self, faceid, filename):
+        start_time = time.time()  # Record the start time
+
         try:
             # Create a temporary file
             with tempfile.NamedTemporaryFile(delete=False, suffix=".faceid") as temp_file:
@@ -41,6 +44,9 @@ class IPAdapterSaveFaceIdS3:
             if temp_file_path and os.path.exists(temp_file_path):
                 os.remove(temp_file_path)
 
+        end_time = time.time()  # Record the end time
+        print("### Saved faceId in: {:.6f} seconds".format(end_time - start_time))
+
         return (None, )
 
 
@@ -54,9 +60,19 @@ class IPAdapterLoadFaceIdS3:
     CATEGORY = "ipadapter/faceid"
 
     def load(self, faceid):
+        start_time = time.time()  # Record the start time
+
         input_dir = folder_paths.get_input_directory()
         local_path = os.path.join(input_dir, faceid)
-        s3_path = os.path.join(os.getenv("S3_INPUT_DIR"), faceid)
-        downloaded_path = S3_INSTANCE.download_file(s3_path=s3_path, local_path=local_path)
-        faceid = torch.load(downloaded_path)
+        if os.path.exists(file_path):
+            print("### downloading faceid file")
+            s3_path = os.path.join(os.getenv("S3_INPUT_DIR"), faceid)
+            local_path = S3_INSTANCE.download_file(s3_path=s3_path, local_path=local_path)
+        else:
+            print("### using cached faceid file")
+        faceid = torch.load(local_path)
+
+        end_time = time.time()  # Record the end time
+        print("### Loaded faceId in: {:.6f} seconds".format(end_time - start_time))
+
         return ({ "cond": faceid["cond"] , "uncond": faceid["uncond"], "cond_alt" : faceid["cond_alt"], "img_cond_embeds": faceid["img_cond_embeds"]}, )
