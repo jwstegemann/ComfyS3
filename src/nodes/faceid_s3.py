@@ -64,7 +64,7 @@ class IPAdapterLoadFaceIdS3:
 
         input_dir = folder_paths.get_input_directory()
         local_path = os.path.join(input_dir, faceid)
-        if os.path.exists(file_path):
+        if os.path.exists(local_path):
             print("### downloading faceid file")
             s3_path = os.path.join(os.getenv("S3_INPUT_DIR"), faceid)
             local_path = S3_INSTANCE.download_file(s3_path=s3_path, local_path=local_path)
