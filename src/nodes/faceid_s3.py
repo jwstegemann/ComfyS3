@@ -149,4 +149,4 @@ class IPAdapterLoadEmbedsS3:
         end_time = time.time()  # Record the end time
         print("### Loaded faceId in: {:.6f} seconds".format(end_time - start_time))
 
-        return ({ "cond": embeds["cond"] , "uncond": embeds["uncond"], "cond_alt" : embeds["cond_alt"], , "img_cond_embeds" : embeds["img_cond_embeds"]}, )
+        return ({ "cond": embeds["cond"] , "uncond": embeds["uncond"], "cond_alt" : embeds["cond_alt"], "img_cond_embeds" : embeds["img_cond_embeds"]}, )
