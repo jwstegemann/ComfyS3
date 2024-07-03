@@ -124,7 +124,7 @@ class IPAdapterSaveEmbedsS3:
         return (None, )
 
 
-class IPAdapterLoadFaceIdS3:
+class IPAdapterLoadEmbedsS3:
     @classmethod
     def INPUT_TYPES(s):
         return {"required": {"embeds": ("STRING", {"default": "PathToEmbeds"}) } }
